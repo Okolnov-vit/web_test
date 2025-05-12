@@ -1,0 +1,30 @@
+name: Deploy Website
+
+on:
+  push:
+    branches:
+      - main  # или master, в зависимости от ветки
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # Этап тестирования (например, запуск линтинга или простого теста)
+    - name: Run simple test
+      run: |
+        # Например, проверим, что index.html существует
+        if [ ! -f index.html ]; then
+          echo "index.html не найден!"
+          exit 1
+        fi
+    
+    # Если тесты прошли успешно, можно развернуть сайт
+    - name: Deploy to server
+      if: success()
+      run: |
+        # Выполняем копирование файлов на сервер через scp
+        # замените user@server на свои данные
+        scp -r ./index.html ./style.css ./script.js user@server:/var/www/html/
